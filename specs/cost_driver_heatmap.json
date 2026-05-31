@@ -1,0 +1,40 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Heatmap showing post-2020 CPI growth by state and CPI category.",
+  "width": "container",
+  "height": 380,
+  "data": { "url": "../data/cpi_2d_state.csv" },
+  "transform": [
+    { "filter": "datum.division != 'overall'" },
+    {
+      "calculate": "datum.division == '1' ? 'Food' : datum.division == '4' ? 'Housing' : datum.division == '6' ? 'Health' : datum.division == '7' ? 'Transport' : datum.division == '10' ? 'Education' : datum.division == '11' ? 'Restaurants' : 'Other'",
+      "as": "division_short"
+    },
+    { "filter": "datum.division_short != 'Other'" },
+    { "filter": "datum.date >= '2020-01-01'" },
+    {
+      "window": [
+        { "op": "first_value", "field": "index", "as": "start_index" },
+        { "op": "last_value", "field": "index", "as": "latest_index" }
+      ],
+      "frame": [null, null],
+      "sort": [{ "field": "date", "order": "ascending" }],
+      "groupby": ["state", "division_short"]
+    },
+    { "window": [{ "op": "rank", "as": "latest_row" }], "sort": [{ "field": "date", "order": "descending" }], "groupby": ["state", "division_short"] },
+    { "filter": "datum.latest_row == 1" },
+    { "calculate": "toNumber(datum.latest_index) - toNumber(datum.start_index)", "as": "growth_index" }
+  ],
+  "mark": { "type": "rect", "cornerRadius": 2 },
+  "encoding": {
+    "x": { "field": "division_short", "type": "nominal", "sort": ["Food", "Housing", "Transport", "Restaurants", "Health", "Education"] },
+    "y": { "field": "state", "type": "nominal" },
+    "color": { "field": "growth_index", "type": "quantitative", "scale": { "range": ["#f2f2f7", "#a1a1a6", "#1d1d1f"] }, "title": "CPI increase" },
+    "tooltip": [
+      { "field": "state", "type": "nominal" },
+      { "field": "division_short", "type": "nominal" },
+      { "field": "growth_index", "type": "quantitative", "format": ".1f" }
+    ]
+  },
+  "title": { "text": "Category pressure", "subtitle": "Post-2020 growth by state.", "anchor": "start" }
+}

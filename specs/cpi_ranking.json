@@ -1,0 +1,38 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Bar chart ranking states by latest overall CPI.",
+  "width": "container",
+  "height": 380,
+  "data": { "url": "../data/cpi_2d_state.csv" },
+  "transform": [
+    { "filter": "datum.division == 'overall'" },
+    { "window": [{ "op": "rank", "as": "date_rank" }], "sort": [{ "field": "date", "order": "descending" }], "groupby": ["state"] },
+    { "filter": "datum.date_rank == 1" },
+    { "window": [{ "op": "rank", "as": "state_rank" }], "sort": [{ "field": "index", "order": "descending" }] }
+  ],
+  "layer": [
+    {
+      "mark": { "type": "bar", "cornerRadiusEnd": 2 },
+      "encoding": {
+        "x": { "field": "state", "type": "nominal", "sort": { "field": "index", "order": "descending" }, "axis": { "labelAngle": -30, "labelLimit": 100 } },
+        "y": { "field": "index", "type": "quantitative", "title": "Latest overall CPI, 2010 = 100" },
+        "color": { "condition": { "test": "datum.state_rank <= 3", "value": "#1d1d1f" }, "value": "#e5e5e7" },
+        "tooltip": [
+          { "field": "state", "type": "nominal" },
+          { "field": "date", "type": "temporal", "format": "%b %Y" },
+          { "field": "index", "type": "quantitative", "format": ".1f" },
+          { "field": "state_rank", "type": "quantitative" }
+        ]
+      }
+    },
+    {
+      "mark": { "type": "text", "dy": -8, "fontSize": 10, "fontWeight": 600, "color": "#6e6e73" },
+      "encoding": {
+        "x": { "field": "state", "type": "nominal", "sort": { "field": "index", "order": "descending" } },
+        "y": { "field": "index", "type": "quantitative" },
+        "text": { "field": "index", "type": "quantitative", "format": ".1f" }
+      }
+    }
+  ],
+  "title": { "text": "Latest CPI", "subtitle": "State ranking by latest index.", "anchor": "start" }
+}

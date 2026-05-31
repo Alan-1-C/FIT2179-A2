@@ -1,0 +1,39 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Scatterplot comparing mean household income and expenditure by state.",
+  "width": "container",
+  "height": 400,
+  "data": { "url": "../data/hies_state.csv" },
+  "transform": [
+    { "window": [{ "op": "rank", "as": "latest_row" }], "sort": [{ "field": "date", "order": "descending" }], "groupby": ["state"] },
+    { "filter": "datum.latest_row == 1" },
+    { "calculate": "toNumber(datum.income_mean)", "as": "income_mean_num" },
+    { "calculate": "toNumber(datum.expenditure_mean)", "as": "expenditure_mean_num" },
+    { "calculate": "datum.expenditure_mean_num / datum.income_mean_num * 100", "as": "expenditure_share" }
+  ],
+  "layer": [
+    {
+      "transform": [{ "regression": "expenditure_mean_num", "on": "income_mean_num" }],
+      "mark": { "type": "line", "strokeDash": [4, 4], "strokeWidth": 1, "color": "#e5e5e7" },
+      "encoding": {
+        "x": { "field": "income_mean_num", "type": "quantitative" },
+        "y": { "field": "expenditure_mean_num", "type": "quantitative" }
+      }
+    },
+    {
+      "mark": { "type": "circle", "size": 120, "opacity": 0.85, "stroke": "#ffffff", "strokeWidth": 1.5 },
+      "encoding": {
+        "x": { "field": "income_mean_num", "type": "quantitative", "title": "Mean monthly household income (RM)" },
+        "y": { "field": "expenditure_mean_num", "type": "quantitative", "title": "Mean monthly household expenditure (RM)" },
+        "color": { "field": "expenditure_share", "type": "quantitative", "scale": { "range": ["#f2f2f7", "#a1a1a6", "#1d1d1f"] } },
+        "tooltip": [
+          { "field": "state", "type": "nominal" },
+          { "field": "income_mean_num", "type": "quantitative", "format": ",.0f" },
+          { "field": "expenditure_mean_num", "type": "quantitative", "format": ",.0f" },
+          { "field": "expenditure_share", "type": "quantitative", "format": ".1f" }
+        ]
+      }
+    }
+  ],
+  "title": { "text": "Income vs spending", "subtitle": "Latest state means.", "anchor": "start" }
+}

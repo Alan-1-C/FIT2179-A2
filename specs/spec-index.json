@@ -1,0 +1,17 @@
+{
+  "title": "Vega-Lite specification index",
+  "visualisation": "The Cost of Living in Malaysia",
+  "notes": "These files provide human-readable Vega-Lite JSON descriptions for each diagram or map used in the web page. A few charts compute derived rows in JavaScript before embedding; their JSON files document the rendered Vega-Lite structure and expected derived fields.",
+  "specs": [
+    { "id": "cpi_trend", "file": "cpi_trend.json" },
+    { "id": "cpi_ranking", "file": "cpi_ranking.json" },
+    { "id": "cpi_growth_map", "file": "cpi_growth_map.json" },
+    { "id": "cpi_growth_ranking", "file": "cpi_growth_ranking.json" },
+    { "id": "cost_driver_heatmap", "file": "cost_driver_heatmap.json" },
+    { "id": "category_trends", "file": "category_trends.json" },
+    { "id": "income_expenditure", "file": "income_expenditure.json" },
+    { "id": "expenditure_burden", "file": "expenditure_burden.json" },
+    { "id": "poverty_price_growth", "file": "poverty_price_growth.json" },
+    { "id": "final_pressure_index", "file": "final_pressure_index.json" }
+  ]
+}

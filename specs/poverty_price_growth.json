@@ -1,0 +1,45 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Bubble scatterplot using derived data joined from CPI growth and household income/expenditure data. JavaScript computes cpi_growth_index and expenditure_share before rendering.",
+  "width": "container",
+  "height": 380,
+  "data": {
+    "name": "derived_poverty_price_growth_rows",
+    "description": "Rows contain state, cpi_growth_index, poverty, and expenditure_share."
+  },
+  "layer": [
+    {
+      "mark": { "type": "rule", "strokeDash": [4, 4], "strokeWidth": 1, "color": "#e5e5e7" },
+      "encoding": { "x": { "aggregate": "mean", "field": "cpi_growth_index", "type": "quantitative" } }
+    },
+    {
+      "mark": { "type": "rule", "strokeDash": [4, 4], "strokeWidth": 1, "color": "#e5e5e7" },
+      "encoding": { "y": { "aggregate": "mean", "field": "poverty", "type": "quantitative" } }
+    },
+    {
+      "mark": { "type": "circle", "opacity": 0.85, "stroke": "#ffffff", "strokeWidth": 1.5 },
+      "encoding": {
+        "x": { "field": "cpi_growth_index", "type": "quantitative", "title": "CPI increase since 2020 (index points)" },
+        "y": { "field": "poverty", "type": "quantitative", "title": "Poverty rate (%)" },
+        "size": { "field": "expenditure_share", "type": "quantitative", "scale": { "range": [80, 600] }, "title": "Spending burden" },
+        "color": { "field": "expenditure_share", "type": "quantitative", "scale": { "range": ["#f2f2f7", "#a1a1a6", "#1d1d1f"] } },
+        "tooltip": [
+          { "field": "state", "type": "nominal" },
+          { "field": "cpi_growth_index", "type": "quantitative", "format": ".1f" },
+          { "field": "poverty", "type": "quantitative", "format": ".1f" },
+          { "field": "expenditure_share", "type": "quantitative", "format": ".1f" }
+        ]
+      }
+    },
+    {
+      "transform": [{ "filter": "datum.poverty >= 8 || datum.cpi_growth_index >= 28 || datum.expenditure_share >= 68" }],
+      "mark": { "type": "text", "align": "left", "baseline": "middle", "dx": 8, "fontSize": 10, "fontWeight": 600, "color": "#1d1d1f" },
+      "encoding": {
+        "x": { "field": "cpi_growth_index", "type": "quantitative" },
+        "y": { "field": "poverty", "type": "quantitative" },
+        "text": { "field": "state", "type": "nominal" }
+      }
+    }
+  ],
+  "title": { "text": "Poverty overlap", "subtitle": "Poverty, price growth, and burden.", "anchor": "start" }
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Line chart showing CPI trend for all states, with one selected state highlighted.",
+  "width": "container",
+  "height": 320,
+  "data": { "url": "../data/cpi_2d_state.csv" },
+  "params": [
+    {
+      "name": "selectedState",
+      "value": "Selangor",
+      "bind": {
+        "input": "select",
+        "name": "Selected State",
+        "options": [
+          "Johor", "Kedah", "Kelantan", "Melaka", "Negeri Sembilan", "Pahang",
+          "Perak", "Perlis", "Pulau Pinang", "Sabah", "Sarawak", "Selangor",
+          "Terengganu", "W.P. Kuala Lumpur", "W.P. Labuan", "W.P. Putrajaya"
+        ]
+      }
+    }
+  ],
+  "transform": [{ "filter": "datum.division == 'overall'" }],
+  "layer": [
+    {
+      "mark": { "type": "line", "strokeWidth": 1, "opacity": 0.15, "color": "#a1a1a6" },
+      "encoding": {
+        "x": { "field": "date", "type": "temporal", "axis": { "format": "%Y", "labelAngle": 0, "grid": false } },
+        "y": { "field": "index", "type": "quantitative", "scale": { "zero": false } },
+        "detail": { "field": "state", "type": "nominal" }
+      }
+    },
+    {
+      "transform": [{ "filter": "datum.state == selectedState" }],
+      "mark": { "type": "line", "strokeWidth": 2.5, "color": "#1d1d1f" },
+      "encoding": {
+        "x": { "field": "date", "type": "temporal" },
+        "y": { "field": "index", "type": "quantitative" },
+        "tooltip": [
+          { "field": "state", "type": "nominal", "title": "State" },
+          { "field": "date", "type": "temporal", "title": "Date", "format": "%b %Y" },
+          { "field": "index", "type": "quantitative", "title": "CPI", "format": ".1f" }
+        ]
+      }
+    }
+  ],
+  "title": { "text": "CPI trend", "subtitle": "Selected state against all states.", "anchor": "start" }
+}

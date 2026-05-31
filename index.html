@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Cost of Living in Malaysia</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
+</head>
+
+<body>
+  <nav class="top-nav">
+    <div class="nav-inner">
+      <div class="nav-brand">Malaysia Cost Study</div>
+      <ul class="nav-links">
+        <li><a href="#part1">Trends</a></li>
+        <li><a href="#part2">Geography</a></li>
+        <li><a href="#part3">Drivers</a></li>
+        <li><a href="#part4">Income</a></li>
+        <li><a href="#part5">Poverty</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="hero">
+      <p class="hero-eyebrow">Data Narrative</p>
+      <h1>The Cost of Living in Malaysia</h1>
+      <p class="hero-sub">An analytical study on price evolution and household economic pressure across the Federation.</p>
+      <p class="hero-body">Headline inflation looks moderate, but CPI and household income data reveal sharper pressure in specific states.</p>
+    </header>
+
+    <div class="summary-box">
+      <div>
+        <h3>Executive Summary</h3>
+        <p>Regional price pressure is uneven.</p>
+      </div>
+      <ul class="summary-list">
+        <li class="summary-item">
+          <strong>Structural Shifts</strong>
+          <span>Post-2020 costs reset higher.</span>
+        </li>
+        <li class="summary-item">
+          <strong>Regional Divergence</strong>
+          <span>Growth gaps widened after 2020.</span>
+        </li>
+        <li class="summary-item">
+          <strong>Burden Concentration</strong>
+          <span>Household buffers are uneven.</span>
+        </li>
+        <li class="summary-item">
+          <strong>Policy Implication</strong>
+          <span>National CPI masks local pressure.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div id="part1" class="section-group">
+      <p class="group-title"><span>Part 1</span> Price Evolution</p>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <p class="metric-label">National Avg CPI</p>
+          <p class="metric-value" id="metric_national_cpi">Loading</p>
+          <p class="metric-trend" id="metric_national_cpi_trend">Latest state average</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Highest Growth State</p>
+          <p class="metric-value" id="metric_highest_growth_state">Loading</p>
+          <p class="metric-trend trend-up" id="metric_highest_growth_value">Post-2020 growth</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Stability Leader</p>
+          <p class="metric-value" id="metric_stability_state">Loading</p>
+          <p class="metric-trend trend-down" id="metric_stability_value">Lowest post-2020 growth</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Core Driver</p>
+          <p class="metric-value" id="metric_core_driver">Loading</p>
+          <p class="metric-trend trend-up" id="metric_core_driver_value">Dominant factor</p>
+        </div>
+      </div>
+
+      <section class="section side-by-side">
+        <div class="section-text">
+          <p class="section-label">Trend Analysis</p>
+          <h2>Post-2020 inflation marks a structural shift</h2>
+          <p>Prices rose more steeply after 2020, lifting the baseline across nearly all states.</p>
+          <div class="insight-box">
+            <span class="insight-title">Insight: The 2020 Pivot</span>
+            <p class="insight-text">The post-2020 slope suggests a structural reset rather than a short cycle.</p>
+          </div>
+        </div>
+        <div class="chart-box chart-box-large">
+          <div class="chart-container"><div id="cpi_trend"></div></div>
+          <p class="source">Source: DOSM Monthly CPI by State.</p>
+        </div>
+      </section>
+
+      <section class="section section-tight">
+        <div class="section-text">
+          <p class="section-label">Static View</p>
+          <h2>Urban states sit at the top of the latest CPI index</h2>
+          <p>Latest CPI levels remain highest in more urbanised states.</p>
+        </div>
+        <div class="chart-box chart-box-compact">
+          <div class="chart-container"><div id="cpi_ranking"></div></div>
+        </div>
+      </section>
+    </div>
+
+    <div id="part2" class="section-group">
+      <p class="group-title"><span>Part 2</span> Geographic Distribution</p>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <p class="metric-label">Regional Heat</p>
+          <p class="metric-value" id="geo_high_growth_state">Loading</p>
+          <p class="metric-trend trend-up" id="geo_high_growth_value">Highest growth state</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Stability Leader</p>
+          <p class="metric-value" id="geo_low_growth_state">Loading</p>
+          <p class="metric-trend" id="geo_low_growth_value">Lowest growth state</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Growth Spread</p>
+          <p class="metric-value" id="geo_growth_spread">Loading</p>
+          <p class="metric-trend" id="geo_growth_period">CPI point gap</p>
+        </div>
+      </div>
+
+      <section class="section section-tight">
+        <div class="section-text">
+          <p class="section-label">Spatial Pattern</p>
+          <h2>Price acceleration clusters around a few states</h2>
+          <p>Since 2020, price growth has concentrated in a small group of states.</p>
+        </div>
+        <div class="map-panel">
+          <div class="map-visual">
+            <div class="chart-container"><div id="cpi_growth_map"></div></div>
+          </div>
+          <aside class="map-sidebar">
+            <span class="section-label">Map Readout</span>
+            <h3>Growth is concentrated, not evenly spread.</h3>
+            <p>Hover over any state to update this panel with its CPI growth details.</p>
+            <div id="cpi_growth_map_selected" class="map-selected" aria-live="polite"></div>
+            <div class="map-top-list">
+              <span class="map-selected-title">Top 3 Growth States</span>
+              <ol id="cpi_growth_map_top3" aria-live="polite"></ol>
+            </div>
+            <div id="cpi_growth_map_summary" class="map-summary" aria-live="polite"></div>
+            <div class="map-note">
+              <span></span>
+              <p>West Coast corridors show stronger growth; island territories remain steadier.</p>
+            </div>
+            <p class="source">Sources: DOSM; Natural Earth TopoJSON.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section section-tight">
+        <div class="section-text">
+          <p class="section-label">Ranking</p>
+          <h2>Putrajaya leads post-2020 price acceleration</h2>
+          <p>Index-point growth makes the post-2020 acceleration easier to compare across states.</p>
+        </div>
+        <div class="chart-box chart-box-compact">
+          <div class="chart-container"><div id="cpi_growth_ranking"></div></div>
+        </div>
+      </section>
+    </div>
+
+    <div id="part3" class="section-group">
+      <p class="group-title"><span>Part 3</span> Sector Drivers</p>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <p class="metric-label">Food Inflation</p>
+          <p class="metric-value" id="metric_food_growth">Loading</p>
+          <p class="metric-trend trend-up" id="metric_food_growth_value">Critical stress point</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Housing Costs</p>
+          <p class="metric-value" id="metric_housing_growth">Loading</p>
+          <p class="metric-trend" id="metric_housing_growth_value">Structural climb</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Transport Index</p>
+          <p class="metric-value" id="metric_transport_index">Loading</p>
+          <p class="metric-trend" id="metric_transport_index_value">Energy dependent</p>
+        </div>
+      </div>
+
+      <section class="section side-by-side">
+        <div class="section-text">
+          <p class="section-label">Sector Heatmap</p>
+          <h2>Food and transport expose the pressure points</h2>
+          <p>Essential categories reveal where price pressure is felt most directly.</p>
+          <div class="insight-box">
+            <span class="insight-title">Sectoral Concentration</span>
+            <p class="insight-text">Food shows the strongest variation, making it a key stress signal.</p>
+          </div>
+        </div>
+        <div class="chart-box chart-box-large">
+          <div class="chart-container"><div id="cost_driver_heatmap"></div></div>
+        </div>
+      </section>
+
+      <section class="section section-tight">
+        <div class="section-text">
+          <p class="section-label">Sector Trends</p>
+          <h2>Essential categories explain perceived inflation</h2>
+          <p>Frequent purchases make food and dining costs especially visible to households.</p>
+        </div>
+        <div class="chart-box chart-box-large">
+          <div class="chart-container"><div id="category_trends"></div></div>
+        </div>
+      </section>
+    </div>
+
+    <div id="part4" class="section-group">
+      <p class="group-title"><span>Part 4</span> Financial Capacity</p>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <p class="metric-label">Mean HH Income</p>
+          <p class="metric-value" id="metric_income_mean">Loading</p>
+          <p class="metric-trend" id="metric_income_mean_value">National average</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Burden Threshold</p>
+          <p class="metric-value">60%</p>
+          <p class="metric-trend trend-up">Critical limit</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Highest Surplus</p>
+          <p class="metric-value" id="metric_highest_surplus">Loading</p>
+          <p class="metric-trend" id="metric_highest_surplus_value">High resilience</p>
+        </div>
+      </div>
+
+      <section class="section two-up">
+        <div class="column">
+          <p class="section-label">Correlation</p>
+          <h2>Higher income does not guarantee resilience</h2>
+          <p>In high-income states, spending often rises with income, limiting the household buffer.</p>
+          <div class="chart-box chart-box-compact">
+            <div class="chart-container"><div id="income_expenditure"></div></div>
+          </div>
+        </div>
+        <div class="column">
+          <p class="section-label">Relative Burden</p>
+          <h2>Consumption ratio reveals household stress</h2>
+          <p>The spending-to-income ratio shows how much room households have left after monthly costs.</p>
+          <div class="chart-box chart-box-compact">
+            <div class="chart-container"><div id="expenditure_burden"></div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="part5" class="section-group">
+      <p class="group-title"><span>Part 5</span> Synthesis</p>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <p class="metric-label">Max Pressure Index</p>
+          <p class="metric-value" id="metric_max_pressure">Loading</p>
+          <p class="metric-trend trend-up">Critical exposure</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Vulnerability Rank</p>
+          <p class="metric-value" id="metric_vulnerability_state">Loading</p>
+          <p class="metric-trend" id="metric_vulnerability_value">Highest risk</p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Resilience Score</p>
+          <p class="metric-value" id="metric_resilience_score">Loading</p>
+          <p class="metric-trend" id="metric_resilience_value">National best</p>
+        </div>
+      </div>
+
+      <section class="section side-by-side">
+        <div class="section-text">
+          <p class="section-label">Vulnerability Matrix</p>
+          <h2>Poverty and price growth reveal different kinds of pressure</h2>
+          <p>Sabah stands out on poverty, while high-growth states show where prices are moving fastest. Bubble size adds spending burden.</p>
+        </div>
+        <div class="chart-box chart-box-large">
+          <div class="chart-container"><div id="poverty_price_growth"></div></div>
+        </div>
+      </section>
+
+      <section class="section section-tight">
+        <div class="section-text">
+          <p class="section-label">Composite Indicator</p>
+          <h2>The composite index shows where burdens overlap</h2>
+          <p>The final index ranks where price growth, spending burden, and poverty stack together.</p>
+        </div>
+        <div class="chart-box final-chart">
+          <div class="method-strip">
+            <span>Index method</span>
+            <p>Equal-weight average of standardised CPI growth, expenditure burden, and poverty rate.</p>
+          </div>
+          <div class="chart-container"><div id="final_pressure_index"></div></div>
+        </div>
+      </section>
+
+      <section class="section section-tight">
+        <div class="section-text">
+          <p class="section-label">Strategic Outlook</p>
+          <h2>Policy should target the source of pressure</h2>
+          <p>Policy should match the pressure source:</p>
+          <div class="metrics-grid recommendation-grid">
+            <div class="metric-card">
+              <p class="metric-label">Supply Side</p>
+              <p class="metric-value">Agro-Tech</p>
+              <p class="metric-trend">Reducing food import dependency</p>
+            </div>
+            <div class="metric-card">
+              <p class="metric-label">Social Safety</p>
+              <p class="metric-value">Tiered Aid</p>
+              <p class="metric-trend">Dynamic cash transfers for high-growth states</p>
+            </div>
+            <div class="metric-card">
+              <p class="metric-label">Mobility</p>
+              <p class="metric-value">Transit Fix</p>
+              <p class="metric-trend">Decoupling household costs from fuel volatility</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="methodology-wrap">
+      <div class="insight-box methodology-box">
+        <span class="insight-title">Methodology & Limitations</span>
+        <p class="insight-text">Data is sourced from DOSM. CPI uses fixed baskets; income figures are state means, so median household experiences may differ. Human-readable Vega-Lite JSON specifications are available in <a href="specs/spec-index.json">specs/spec-index.json</a>.</p>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-text">
+        <span>&copy; 2026 Malaysia Cost Study.</span>
+        <span>Created by CHEN ZHIQIN, STUDENT ID：35740841， May 2026.</span>
+        <span>Source 1: <a href="https://open.dosm.gov.my/data-catalogue/cpi_state">DOSM Monthly CPI by State &amp; Division</a></span>
+        <span>Source 2: <a href="https://open.dosm.gov.my/data-catalogue/hies_state">DOSM Household Income and Expenditure: States</a></span>
+        <span>Source 3: <a href="https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-1-states-provinces/">Natural Earth Admin 1 States/Provinces</a></span>
+      </div>
+      <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Back to Top</button>
+    </footer>
+  </main>
+
+  <script type="module" src="js/main.js?v=4"></script>
+</body>
+</html>

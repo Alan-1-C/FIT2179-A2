@@ -1,0 +1,50 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Geographic map of Malaysia showing post-2020 CPI index-point growth by state. The web page computes state growth values, joins them to Natural Earth geometry, and shifts East Malaysia west for compact display before embedding this map.",
+  "width": "container",
+  "height": 300,
+  "data": {
+    "name": "derived_shifted_malaysia_geojson",
+    "description": "GeoJSON features contain state_name, growth_index, growth_pct, start_index, latest_index, longitude, and latitude."
+  },
+  "projection": { "type": "mercator", "center": [107.6, 4.1], "scale": 1850 },
+  "layer": [
+    {
+      "params": [
+        {
+          "name": "hoveredState",
+          "select": { "type": "point", "fields": ["state_name"], "on": "mouseover", "clear": "mouseout", "empty": false }
+        }
+      ],
+      "mark": { "type": "geoshape", "cursor": "default", "invalid": null },
+      "encoding": {
+        "color": { "field": "growth_index", "type": "quantitative", "scale": { "range": ["#ececef", "#77797f", "#1d1d1f"] }, "title": "CPI increase since 2020" },
+        "stroke": { "condition": { "param": "hoveredState", "empty": false, "value": "#1d1d1f" }, "value": "rgba(255,255,255,0.55)" },
+        "strokeWidth": { "condition": { "param": "hoveredState", "empty": false, "value": 1.8 }, "value": 0.45 },
+        "opacity": { "condition": { "param": "hoveredState", "empty": false, "value": 1 }, "value": 0.96 },
+        "tooltip": [
+          { "field": "state_name", "type": "nominal", "title": "State" },
+          { "field": "growth_index", "type": "quantitative", "title": "CPI Increase", "format": ".1f" },
+          { "field": "growth_pct", "type": "quantitative", "title": "Growth %", "format": ".1f" }
+        ]
+      }
+    },
+    {
+      "data": {
+        "name": "derived_map_labels",
+        "description": "Label rows for selected states only, currently Selangor and Pahang."
+      },
+      "mark": { "type": "text", "fontSize": 9, "fontWeight": 800, "fill": "#1d1d1f", "dy": -3 },
+      "encoding": {
+        "longitude": { "field": "longitude", "type": "quantitative" },
+        "latitude": { "field": "latitude", "type": "quantitative" },
+        "text": { "field": "state_name", "type": "nominal" }
+      }
+    }
+  ],
+  "title": {
+    "text": "CPI growth map",
+    "subtitle": "Darker tones show larger increases. East Malaysia shifted west for compact display.",
+    "anchor": "start"
+  }
+}
